@@ -22,7 +22,7 @@ namespace Settings
             : _deathAnimationHash;
 
         public int ShootAnimationHash => _shootAnimationHash == default
-            ? _shootAnimationHash = Animator.StringToHash("GunShot")
+            ? _shootAnimationHash = Animator.StringToHash(shootAnimationName)
             : _shootAnimationHash;
     }
 }
