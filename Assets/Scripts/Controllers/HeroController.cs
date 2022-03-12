@@ -21,7 +21,7 @@ namespace Controllers
             ControllersManager.Instance.GameController.ShootingMechanic.RunBullet(direction);
         }
 
-        public void MoveToNextPoint()
+        public void MoveToNextPoint(int level)
         {
             DOTween.Sequence()
                 .AppendCallback(() =>
@@ -31,7 +31,7 @@ namespace Controllers
                 .AppendInterval(startRunningPauseDuration)
                 .AppendCallback(() =>
                 {
-                    navMeshAgent.SetDestination(wayPoints[0].position);
+                    navMeshAgent.SetDestination(wayPoints[level].position);
                     _checkIfStopped = true;
                 });
         }

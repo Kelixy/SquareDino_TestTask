@@ -13,10 +13,23 @@ namespace Controllers
         public AnimationKeys AnimationKeys => animationKeys;
         public ShootingMechanic ShootingMechanic => shootingMechanic;
         public Camera MainCamera => mainCamera;
+
+        private ControllersManager _controllersManager;
         
         void Start()
         {
+            _controllersManager = ControllersManager.Instance;
             ShootingMechanic.Initialize();
+            _controllersManager.HeroController.MoveToNextPoint(0);
+        }
+
+        public void PlusWalkthroughCondition()
+        {
+            var levelsController = _controllersManager.LevelsController;
+            levelsController.PlusOneEnemyKilled();
+            
+            if (levelsController.CheckIfLevelAimReached())
+                levelsController.GoToNextLevel();
         }
 
         void Update()
@@ -25,7 +38,7 @@ namespace Controllers
             {
                 if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out var hit))
                 {
-                    ControllersManager.Instance.HeroController.Shoot(hit.point);
+                    _controllersManager.HeroController.Shoot(hit.point);
                 }
             }
         }
