@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36094bbe7d13dce4cb183e4af8e3106a, type: 3}
   m_Name: Animation_Keys
   m_EditorClassIdentifier: 
-  runAnimationName: Run
+  runAnimationName: IdleToRun
   deathAnimationName: Death
-  shootAnimationName: Shoot
+  shootAnimationName: RifleFiring
+  idleAnimationName: RifleAimingIdle

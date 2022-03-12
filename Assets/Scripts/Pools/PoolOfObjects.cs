@@ -6,26 +6,26 @@ namespace Pools
 {
     public class PoolOfObjects<T> : ComponentSingleton<PoolOfObjects<T>>
     {
-        private readonly Queue<T> _poolOfFliers;
+        private readonly Queue<T> _poolOfObjects;
         private readonly Transform _parentTransform;
         private readonly GameObject _prefab;
 
         public PoolOfObjects(GameObject prefab, Transform parentTransform)
         {
-            _poolOfFliers = new Queue<T>();
+            _poolOfObjects = new Queue<T>();
             _prefab = prefab;
             _parentTransform = parentTransform;
         }
 
         public void Put(T poolObj)
         {
-            _poolOfFliers.Enqueue(poolObj);
+            _poolOfObjects.Enqueue(poolObj);
         }
 
         public T Get()
         {
-            if (_poolOfFliers.Count <= 0) Create();
-            var poolObj = _poolOfFliers.Dequeue();
+            if (_poolOfObjects.Count <= 0) Create();
+            var poolObj = _poolOfObjects.Dequeue();
             return poolObj;
         }
 
