@@ -78,6 +78,7 @@ namespace Controllers
 
         public bool CheckIfLevelAimReached()
         {
+            if (_currentLevel >= levels.Length) return false;
             var enemiesOnCurrentLvl = levels[_currentLevel].CountOfEnemiesOnLvl;
             var killedEnemiesOnCurrentLvl = levels[_currentLevel].EnemiesOnScene.Count(x => x.IsKilled);
             var aimReached = killedEnemiesOnCurrentLvl >= enemiesOnCurrentLvl;

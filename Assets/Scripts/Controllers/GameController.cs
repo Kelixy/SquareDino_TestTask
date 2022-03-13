@@ -68,12 +68,15 @@ namespace Controllers
 
         public void BlockTap(bool block = true) => _tapIsBlocked = block;
 
-        private void EndGameIfLastLevel()
+        private bool EndGameIfLastLevel()
         {
             if (_levelsController.CheckIfLastLevel())
             {
                 EndGame();
+                return true;
             }
+            
+            return false;
         }
 
         private void Update()
