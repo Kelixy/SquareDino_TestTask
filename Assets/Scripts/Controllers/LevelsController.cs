@@ -14,6 +14,7 @@ namespace Controllers
         }
     
         [SerializeField] private Level[] levels;
+        
         private int _currentLevel;
         private int _killedEnemiesCount;
 
@@ -24,7 +25,8 @@ namespace Controllers
 
         public bool CheckIfLevelAimReached()
         {
-            return _killedEnemiesCount >= levels[_currentLevel].EnemiesOnLevel.Length;
+            var enemiesOnCurrentLvl = levels[_currentLevel].EnemiesOnLevel.Length;
+            return _killedEnemiesCount >= enemiesOnCurrentLvl;
         }
 
         public bool CheckIfLastLevel() => _currentLevel >= levels.Length;

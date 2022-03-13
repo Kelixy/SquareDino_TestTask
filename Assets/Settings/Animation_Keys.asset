@@ -16,3 +16,4 @@ MonoBehaviour:
   deathAnimationName: Death
   shootAnimationName: RifleFiring
   idleAnimationName: RifleAimingIdle
+  hitAnimationName: HitReaction

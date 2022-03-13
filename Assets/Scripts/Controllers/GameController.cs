@@ -3,7 +3,6 @@ using Mechanics;
 using Settings;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 namespace Controllers
 {
@@ -24,11 +23,9 @@ namespace Controllers
 
         private void Start()
         {
-            _controllersManager = ControllersManager.Instance;
             ShootingMechanic.Initialize();
+            _controllersManager = ControllersManager.Instance;
             _controllersManager.HeroController.Initialize();
-
-            //StartGame();
         }
 
         public void StartGame()
@@ -38,7 +35,7 @@ namespace Controllers
                 .Append(curtains.DOFade(0, 3));
         }
 
-        public void EndGame()
+        private void EndGame()
         {
             DOTween.Sequence()
                 .AppendCallback(() => { instructions.SetActive(false); })
@@ -46,13 +43,16 @@ namespace Controllers
                 .InsertCallback(1,() => { SceneManager.LoadScene(SceneManager.GetActiveScene().name); });
         }
 
-        public void PlusWalkthroughCondition()
+        public void PlusWalkThroughCondition()
         {
             var levelsController = _controllersManager.LevelsController;
-            levelsController.PlusOneEnemyKilled();
             
+            levelsController.PlusOneEnemyKilled();
+
             if (levelsController.CheckIfLevelAimReached())
+            {
                 levelsController.GoToNextLevel();
+            }
         }
 
         public void BlockTap(bool block = true) => _tapIsBlocked = block;
