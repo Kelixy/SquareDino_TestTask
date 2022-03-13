@@ -10,15 +10,16 @@ namespace SceneObjects
         
         [SerializeField] private Animator enemyAnimator;
         [SerializeField] private Image healthLine;
-        
-        private bool _killed;
-        public bool IsKilled => _killed;
+
+        public bool IsKilled { get; private set; }
+
         public int CurrentHealth { get; private set; }
 
         public void SetStartParams(Vector3 startPos, Quaternion startRotation)
         {
             transform.position = startPos;
             transform.rotation = startRotation;
+            healthLine.fillAmount = 1;
         }
 
         public void Switch(bool shouldBeOn)
@@ -35,7 +36,7 @@ namespace SceneObjects
 
         public void Hit(int damage)
         {
-            if (_killed) return;
+            if (IsKilled) return;
             
             CurrentHealth -= damage;
             
@@ -51,8 +52,8 @@ namespace SceneObjects
 
         private void Kill()
         {
-            if (_killed) return;
-            _killed = true;
+            if (IsKilled) return;
+            IsKilled = true;
             healthLine.fillAmount = 0;
             
             enemyAnimator.Play(GameController.AnimationKeys.DeathAnimationHash);

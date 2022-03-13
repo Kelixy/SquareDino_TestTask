@@ -21,7 +21,7 @@ namespace Controllers
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private Level[] levels;
 
-        public List<IEnemy> EnemiesOnScene { get; private set; }
+        private List<IEnemy> EnemiesOnScene { get; set; }
         private PoolOfObjects<IEnemy> _poolOfEnemies;
         private int _currentLevel;
         private int _killedEnemiesCount;
@@ -81,15 +81,13 @@ namespace Controllers
         {
             for (var i = 0; i < EnemiesOnScene.Count; i++)
             {
-                if (EnemiesOnScene[i].IsKilled)
-                {
-                    _poolOfEnemies.Put(EnemiesOnScene[i]);
-                    EnemiesOnScene[i].Switch(false);
-                }
+                if (!EnemiesOnScene[i].IsKilled) continue;
+                _poolOfEnemies.Put(EnemiesOnScene[i]);
+                EnemiesOnScene[i].Switch(false);
             }
         }
 
-        public void GoToNextLevel()
+        private void GoToNextLevel()
         {
             _killedEnemiesCount = 0;
             _currentLevel++;
