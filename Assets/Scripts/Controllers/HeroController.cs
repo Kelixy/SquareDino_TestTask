@@ -39,6 +39,7 @@ namespace Controllers
         public void MoveToNextPoint(int level)
         {
             DOTween.Sequence()
+                .Append(heroAnimator.transform.DOLocalRotate(new Vector3(0, 0, 0), 0.2f))
                 .AppendCallback(() =>
                 {
                     heroAnimator.Play(_gameController.AnimationKeys.RunAnimationHash);
