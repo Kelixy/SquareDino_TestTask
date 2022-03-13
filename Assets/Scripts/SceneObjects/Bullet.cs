@@ -13,9 +13,18 @@ namespace SceneObjects
         public float Damage => damage;
         public float Speed => speed;
         public Sequence Sequence { get; set; }
-
-        public Rigidbody Rigidbody => rigidbody;
         
+        public void SetSettings(Vector3 startPos, Vector3 velocityValue)
+        {
+            transform.position = startPos;
+            rigidbody.velocity = velocityValue;
+        }
+
+        public void Switch(bool shouldBeOn)
+        {
+            gameObject.SetActive(shouldBeOn);
+        }
+
         private void OnCollisionEnter(Collision collision)
         {
             var enemyComponent = collision.gameObject.GetComponent<Enemy>();

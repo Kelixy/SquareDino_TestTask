@@ -15,18 +15,23 @@ namespace Controllers
         
         [SerializeField] private float startRunningPauseDuration;
 
-        public Vector3 CurrentHeroPosition => navMeshAgent.transform.position;
-
+        private GameController _gameController;
         private bool _checkIfStopped;
+
+        public void Initialize()
+        {
+            _gameController = ControllersManager.Instance.GameController;
+        }
 
         public void Shoot(Vector3 targetPos)
         {
-            var angle = ValuesCounter.CountTurningAngle(CurrentHeroPosition, targetPos);
+            var currentHeroPosition = navMeshAgent.transform.position;
+            var angle = ValuesCounter.CountTurningAngle(currentHeroPosition, targetPos);
             DOTween.Sequence()
-                .Append(navMeshAgent.transform.DORotate(new Vector3(0, angle, 0), 0.2f))
+                .Append(heroAnimator.transform.DORotate(new Vector3(0, angle, 0), 0.2f))
                 .AppendCallback(() =>
                 {
-                    ControllersManager.Instance.GameController.ShootingMechanic.RunBullet(targetPos);
+                    _gameController.ShootingMechanic.RunBullet(targetPos);
                 });
 
         }
@@ -36,7 +41,7 @@ namespace Controllers
             DOTween.Sequence()
                 .AppendCallback(() =>
                 {
-                    heroAnimator.Play(ControllersManager.Instance.GameController.AnimationKeys.RunAnimationHash);
+                    heroAnimator.Play(_gameController.AnimationKeys.RunAnimationHash);
                 })
                 .AppendInterval(startRunningPauseDuration)
                 .AppendCallback(() =>
@@ -53,7 +58,7 @@ namespace Controllers
                 if (Vector3.Distance( navMeshAgent.destination, navMeshAgent.transform.position) <= DestinationDelta)
                 {
                     _checkIfStopped = false;
-                    heroAnimator.Play(ControllersManager.Instance.GameController.AnimationKeys.IdleAnimationHash);
+                    heroAnimator.Play(_gameController.AnimationKeys.IdleAnimationHash);
                 }
             }
         }

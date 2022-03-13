@@ -1,4 +1,3 @@
-using Controllers;
 using DG.Tweening;
 using Pools;
 using SceneObjects;
@@ -13,11 +12,11 @@ namespace Mechanics
         [SerializeField] private GameObject bulletPrefab;
         [SerializeField] private float bulletLifeTime;
 
-        private PoolOfObjects<Bullet> _poolOfBullets;
+        private PoolOfObjects<IBullet> _poolOfBullets;
 
         public void Initialize()
         {
-            _poolOfBullets = new PoolOfObjects<Bullet>(bulletPrefab, poolTransform);
+            _poolOfBullets = new PoolOfObjects<IBullet>(bulletPrefab, poolTransform);
         }
 
         public void RunBullet(Vector3 aimPointPos)
@@ -25,19 +24,18 @@ namespace Mechanics
             var firePos = firePoint.position;
             var bullet = _poolOfBullets.Get();
             var direction = (aimPointPos - firePos).normalized;
-            bullet.transform.position = firePos;
-            bullet.Rigidbody.velocity = direction * bullet.Speed;
-            bullet.gameObject.SetActive(true);
+            bullet.SetSettings(firePos, direction * bullet.Speed);
+            bullet.Switch(true);
             bullet.Sequence = DOTween.Sequence()
                 .AppendInterval(bulletLifeTime)
                 .AppendCallback(() => { StopBullet(bullet); });
         }
 
-        public void StopBullet(Bullet bullet)
+        public void StopBullet(IBullet bullet)
         {
             bullet.Sequence?.Kill();
             _poolOfBullets.Put(bullet);
-            bullet.gameObject.SetActive(false);
+            bullet.Switch(false);
         }
     }
 }

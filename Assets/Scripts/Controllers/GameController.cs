@@ -1,6 +1,8 @@
+using DG.Tweening;
 using Mechanics;
 using Settings;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Controllers
 {
@@ -9,18 +11,32 @@ namespace Controllers
         [SerializeField] private Camera mainCamera;
         [SerializeField] private ShootingMechanic shootingMechanic;
         [SerializeField] private AnimationKeys animationKeys;
+        [SerializeField] private CanvasGroup curtains;
 
         public AnimationKeys AnimationKeys => animationKeys;
         public ShootingMechanic ShootingMechanic => shootingMechanic;
-        public Camera MainCamera => mainCamera;
 
         private ControllersManager _controllersManager;
-        
-        void Start()
+
+        private void Start()
         {
             _controllersManager = ControllersManager.Instance;
             ShootingMechanic.Initialize();
+            _controllersManager.HeroController.Initialize();
+
+            StartGame();
+        }
+
+        private void StartGame()
+        {
             _controllersManager.HeroController.MoveToNextPoint(0);
+        }
+
+        public void EndGame()
+        {
+            DOTween.Sequence()
+                .Append(curtains.DOFade(1, 1))
+                .AppendCallback(() => {SceneManager.LoadScene(SceneManager.GetActiveScene().name);});
         }
 
         public void PlusWalkthroughCondition()
@@ -32,7 +48,7 @@ namespace Controllers
                 levelsController.GoToNextLevel();
         }
 
-        void Update()
+        private void Update()
         {
             if (Input.GetMouseButtonDown(0))
             {
