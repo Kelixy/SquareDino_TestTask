@@ -27,6 +27,8 @@ namespace Controllers
             return _killedEnemiesCount >= levels[_currentLevel].EnemiesOnLevel.Length;
         }
 
+        public bool CheckIfLastLevel() => _currentLevel >= levels.Length;
+
         public void GoToNextLevel()
         {
             _killedEnemiesCount = 0;

@@ -3,6 +3,7 @@ using Mechanics;
 using Settings;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Controllers
 {
@@ -12,11 +13,14 @@ namespace Controllers
         [SerializeField] private ShootingMechanic shootingMechanic;
         [SerializeField] private AnimationKeys animationKeys;
         [SerializeField] private CanvasGroup curtains;
+        [SerializeField] private GameObject instructions;
 
         public AnimationKeys AnimationKeys => animationKeys;
         public ShootingMechanic ShootingMechanic => shootingMechanic;
 
         private ControllersManager _controllersManager;
+
+        private bool _tapIsBlocked = true;
 
         private void Start()
         {
@@ -24,19 +28,22 @@ namespace Controllers
             ShootingMechanic.Initialize();
             _controllersManager.HeroController.Initialize();
 
-            StartGame();
+            //StartGame();
         }
 
-        private void StartGame()
+        public void StartGame()
         {
-            _controllersManager.HeroController.MoveToNextPoint(0);
+            DOTween.Sequence()
+                .AppendCallback(() => {_controllersManager.HeroController.MoveToNextPoint(0);})
+                .Append(curtains.DOFade(0, 3));
         }
 
         public void EndGame()
         {
             DOTween.Sequence()
+                .AppendCallback(() => { instructions.SetActive(false); })
                 .Append(curtains.DOFade(1, 1))
-                .AppendCallback(() => {SceneManager.LoadScene(SceneManager.GetActiveScene().name);});
+                .InsertCallback(1,() => { SceneManager.LoadScene(SceneManager.GetActiveScene().name); });
         }
 
         public void PlusWalkthroughCondition()
@@ -48,9 +55,17 @@ namespace Controllers
                 levelsController.GoToNextLevel();
         }
 
+        public void BlockTap(bool block = true) => _tapIsBlocked = block;
+
+        public void CheckIfLastLevel()
+        {
+            if (_controllersManager.LevelsController.CheckIfLastLevel())
+                EndGame();
+        }
+
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !_tapIsBlocked)
             {
                 if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out var hit))
                 {

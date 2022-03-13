@@ -38,6 +38,8 @@ namespace Controllers
 
         public void MoveToNextPoint(int level)
         {
+            _gameController.BlockTap();
+            
             DOTween.Sequence()
                 .Append(heroAnimator.transform.DOLocalRotate(new Vector3(0, 0, 0), 0.2f))
                 .AppendCallback(() =>
@@ -59,6 +61,8 @@ namespace Controllers
                 if (Vector3.Distance( navMeshAgent.destination, navMeshAgent.transform.position) <= DestinationDelta)
                 {
                     _checkIfStopped = false;
+                    _gameController.BlockTap(false);
+                    _gameController.CheckIfLastLevel();
                     heroAnimator.Play(_gameController.AnimationKeys.IdleAnimationHash);
                 }
             }
