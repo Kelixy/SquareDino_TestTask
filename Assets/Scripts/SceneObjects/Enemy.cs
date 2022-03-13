@@ -57,7 +57,7 @@ namespace SceneObjects
             healthLine.fillAmount = 0;
             
             enemyAnimator.Play(GameController.AnimationKeys.DeathAnimationHash);
-            GameController.PlusWalkThroughCondition();
+            GameController.GoNextIfAimReached();
         }
     }
 }

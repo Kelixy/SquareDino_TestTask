@@ -21,6 +21,8 @@ namespace Controllers
         public ShootingMechanic ShootingMechanic => shootingMechanic;
 
         private ControllersManager _controllersManager;
+        private LevelsController _levelsController;
+        private HeroController _heroController;
 
         private bool _tapIsBlocked = true;
 
@@ -28,20 +30,23 @@ namespace Controllers
         {
             ShootingMechanic.Initialize();
             _controllersManager = ControllersManager.Instance;
-            _controllersManager.HeroController.Initialize();
-            _controllersManager.LevelsController.Initialize();
+            _levelsController = _controllersManager.LevelsController;
+            _heroController = _controllersManager.HeroController;
+            _levelsController.Initialize();
+            _heroController.Initialize();
 
             OnWayPointReached += () =>
             {
                 BlockTap(false);
                 CheckIfLastLevel();
+                GoNextIfAimReached();
             };
         }
 
         public void StartGame()
         {
             DOTween.Sequence()
-                .AppendCallback(() => {_controllersManager.HeroController.MoveToNextPoint();})
+                .AppendCallback(() => {_heroController.MoveToNextPoint();})
                 .Append(curtains.DOFade(0, 3));
         }
 
@@ -53,11 +58,9 @@ namespace Controllers
                 .InsertCallback(1,() => { SceneManager.LoadScene(SceneManager.GetActiveScene().name); });
         }
 
-        public void PlusWalkThroughCondition()
+        public void GoNextIfAimReached()
         {
-            var levelsController = _controllersManager.LevelsController;
-
-            if (levelsController.CheckIfLevelAimReached())
+            if (_levelsController.CheckIfLevelAimReached())
             {
                 OnLevelSucceed.Invoke();
             }
@@ -67,7 +70,7 @@ namespace Controllers
 
         private void CheckIfLastLevel()
         {
-            if (_controllersManager.LevelsController.CheckIfLastLevel())
+            if (_levelsController.CheckIfLastLevel())
             {
                 EndGame();
             }
@@ -79,7 +82,7 @@ namespace Controllers
             {
                 if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out var hit))
                 {
-                    _controllersManager.HeroController.Shoot(hit.point);
+                    _heroController.Shoot(hit.point);
                 }
             }
         }
