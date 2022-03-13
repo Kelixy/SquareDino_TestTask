@@ -12,6 +12,13 @@ namespace SceneObjects
         [SerializeField] private Image healthLine;
         
         public int CurrentHealth { get; private set; }
+
+        public void SetStartParams(Vector3 startPos, Quaternion startRotation)
+        {
+            transform.position = startPos;
+            transform.rotation = startRotation;
+        }
+
         private bool _killed;
 
         private static GameController GameController => ControllersManager.Instance.GameController;

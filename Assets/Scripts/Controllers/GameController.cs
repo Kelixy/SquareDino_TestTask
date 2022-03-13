@@ -26,12 +26,13 @@ namespace Controllers
             ShootingMechanic.Initialize();
             _controllersManager = ControllersManager.Instance;
             _controllersManager.HeroController.Initialize();
+            _controllersManager.LevelsController.Initialize();
         }
 
         public void StartGame()
         {
             DOTween.Sequence()
-                .AppendCallback(() => {_controllersManager.HeroController.MoveToNextPoint(0);})
+                .AppendCallback(() => {_controllersManager.HeroController.MoveToNextPoint();})
                 .Append(curtains.DOFade(0, 3));
         }
 
@@ -60,7 +61,9 @@ namespace Controllers
         public void CheckIfLastLevel()
         {
             if (_controllersManager.LevelsController.CheckIfLastLevel())
+            {
                 EndGame();
+            }
         }
 
         private void Update()
