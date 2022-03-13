@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Pools;
 using SceneObjects;
 using UnityEngine;
@@ -15,26 +16,39 @@ namespace Controllers
             [Range(0,6)][SerializeField] private int countOfEnemiesOnLvl;
             public Transform[] EnemyPointsOnLevel => enemyPointsOnLevel;
             public int CountOfEnemiesOnLvl => countOfEnemiesOnLvl;
+            public List<IEnemy> EnemiesOnScene { get; set; }
         }
     
         [SerializeField] private Transform poolTransform;
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private Level[] levels;
 
-        private List<IEnemy> EnemiesOnScene { get; set; }
         private PoolOfObjects<IEnemy> _poolOfEnemies;
         private int _currentLevel;
-        private int _killedEnemiesCount;
         private GameController _gameController;
 
         public void Initialize()
         {
-            EnemiesOnScene = new List<IEnemy>();
             _poolOfEnemies = new PoolOfObjects<IEnemy>(enemyPrefab, poolTransform);
+            
+            InitializeEnemiesLists();
             SetEnemies();
+            
             _gameController = ControllersManager.Instance.GameController;
-            _gameController.OnWayPointReached += SwitchOffKilledEnemies;
-            _gameController.OnLevelSucceed += GoToNextLevel;
+            _gameController.OnLevelSucceed += () => { _currentLevel++; };
+            _gameController.OnWayPointReached += () =>
+            {
+                if (_currentLevel > 0 && _currentLevel <= levels.Length)
+                    SwitchOffEnemiesOnLvl(_currentLevel-1);
+            };
+        }
+        
+        private void InitializeEnemiesLists()
+        {
+            for (var i = 0; i < levels.Length; i++)
+            {
+                levels[i].EnemiesOnScene = new List<IEnemy>();
+            }
         }
 
         private void SetEnemies()
@@ -50,8 +64,7 @@ namespace Controllers
             for (var i = 0; i < levels[lvlIndex].CountOfEnemiesOnLvl; i++)
             {
                 var newEnemy = CreateEnemy(levels[lvlIndex].EnemyPointsOnLevel[i]);
-                if (!EnemiesOnScene.Contains(newEnemy))
-                    EnemiesOnScene.Add(newEnemy);
+                levels[lvlIndex].EnemiesOnScene.Add(newEnemy);
             }
         }
 
@@ -63,34 +76,24 @@ namespace Controllers
             return enemy;
         }
 
-        public void PlusOneEnemyKilled()
-        {
-            _killedEnemiesCount++;
-        }
-
         public bool CheckIfLevelAimReached()
         {
             var enemiesOnCurrentLvl = levels[_currentLevel].CountOfEnemiesOnLvl;
-            var aimReached = _killedEnemiesCount >= enemiesOnCurrentLvl;
+            var killedEnemiesOnCurrentLvl = levels[_currentLevel].EnemiesOnScene.Count(x => x.IsKilled);
+            var aimReached = killedEnemiesOnCurrentLvl >= enemiesOnCurrentLvl;
             return aimReached;
         }
 
         public bool CheckIfLastLevel() => _currentLevel >= levels.Length;
 
-        private void SwitchOffKilledEnemies()
+        private void SwitchOffEnemiesOnLvl(int lvl)
         {
-            for (var i = 0; i < EnemiesOnScene.Count; i++)
+            for (var i = 0; i < levels[lvl].EnemiesOnScene.Count; i++)
             {
-                if (!EnemiesOnScene[i].IsKilled) continue;
-                _poolOfEnemies.Put(EnemiesOnScene[i]);
-                EnemiesOnScene[i].Switch(false);
+                if (!levels[lvl].EnemiesOnScene[i].IsKilled) continue;
+                _poolOfEnemies.Put(levels[lvl].EnemiesOnScene[i]);
+                levels[lvl].EnemiesOnScene[i].Switch(false);
             }
-        }
-
-        private void GoToNextLevel()
-        {
-            _killedEnemiesCount = 0;
-            _currentLevel++;
         }
     }
 }

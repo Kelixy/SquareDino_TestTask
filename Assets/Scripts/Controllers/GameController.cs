@@ -56,8 +56,6 @@ namespace Controllers
         public void PlusWalkThroughCondition()
         {
             var levelsController = _controllersManager.LevelsController;
-            
-            levelsController.PlusOneEnemyKilled();
 
             if (levelsController.CheckIfLevelAimReached())
             {
@@ -67,7 +65,7 @@ namespace Controllers
 
         public void BlockTap(bool block = true) => _tapIsBlocked = block;
 
-        public void CheckIfLastLevel()
+        private void CheckIfLastLevel()
         {
             if (_controllersManager.LevelsController.CheckIfLastLevel())
             {
