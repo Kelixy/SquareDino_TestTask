@@ -9,6 +9,7 @@ namespace Mechanics
     public class ShootingMechanic : MonoBehaviour
     {
         [SerializeField] private Transform poolTransform;
+        [SerializeField] private Transform firePoint;
         [SerializeField] private GameObject bulletPrefab;
         [SerializeField] private float bulletLifeTime;
 
@@ -21,10 +22,10 @@ namespace Mechanics
 
         public void RunBullet(Vector3 aimPointPos)
         {
-            var cameraPos = ControllersManager.Instance.GameController.MainCamera.transform.position;
+            var firePos = firePoint.position;
             var bullet = _poolOfBullets.Get();
-            var direction = (aimPointPos - cameraPos).normalized;
-            bullet.transform.position = cameraPos;
+            var direction = (aimPointPos - firePos).normalized;
+            bullet.transform.position = firePos;
             bullet.Rigidbody.velocity = direction * bullet.Speed;
             bullet.gameObject.SetActive(true);
             bullet.Sequence = DOTween.Sequence()

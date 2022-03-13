@@ -1,3 +1,4 @@
+using Counters;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,11 +15,20 @@ namespace Controllers
         
         [SerializeField] private float startRunningPauseDuration;
 
+        public Vector3 CurrentHeroPosition => navMeshAgent.transform.position;
+
         private bool _checkIfStopped;
 
-        public void Shoot(Vector3 direction)
+        public void Shoot(Vector3 targetPos)
         {
-            ControllersManager.Instance.GameController.ShootingMechanic.RunBullet(direction);
+            var angle = ValuesCounter.CountTurningAngle(CurrentHeroPosition, targetPos);
+            DOTween.Sequence()
+                .Append(navMeshAgent.transform.DORotate(new Vector3(0, angle, 0), 0.2f))
+                .AppendCallback(() =>
+                {
+                    ControllersManager.Instance.GameController.ShootingMechanic.RunBullet(targetPos);
+                });
+
         }
 
         public void MoveToNextPoint(int level)
