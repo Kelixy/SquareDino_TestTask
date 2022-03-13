@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Models;
 using UnityEngine;
 
-namespace Pools
+namespace Models
 {
     public class PoolOfObjects<T> : ComponentSingleton<PoolOfObjects<T>>
     {

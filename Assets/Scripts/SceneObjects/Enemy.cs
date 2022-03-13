@@ -12,26 +12,20 @@ namespace SceneObjects
         [SerializeField] private Image healthLine;
 
         public bool IsKilled { get; private set; }
-
-        public int CurrentHealth { get; private set; }
+        public int CurrentHealth { get; private set; }        
+        private static GameController GameController => ControllersManager.Instance.GameController;
 
         public void SetStartParams(Vector3 startPos, Quaternion startRotation)
         {
             transform.position = startPos;
             transform.rotation = startRotation;
             healthLine.fillAmount = 1;
+            CurrentHealth = startHealth;
         }
 
         public void Switch(bool shouldBeOn)
         {
             gameObject.SetActive(shouldBeOn);
-        }
-
-        private static GameController GameController => ControllersManager.Instance.GameController;
-
-        private void Start()
-        {
-            CurrentHealth = startHealth;
         }
 
         public void Hit(int damage)

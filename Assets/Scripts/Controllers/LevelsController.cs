@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pools;
+using Models;
 using SceneObjects;
 using UnityEngine;
 
@@ -24,8 +24,8 @@ namespace Controllers
         [SerializeField] private Level[] levels;
 
         private PoolOfObjects<IEnemy> _poolOfEnemies;
-        private int _currentLevel;
         private GameController _gameController;
+        private int _currentLevel;
 
         public void Initialize()
         {

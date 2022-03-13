@@ -38,7 +38,7 @@ namespace Controllers
             OnWayPointReached += () =>
             {
                 BlockTap(false);
-                CheckIfLastLevel();
+                EndGameIfLastLevel();
                 GoNextIfAimReached();
             };
         }
@@ -68,7 +68,7 @@ namespace Controllers
 
         public void BlockTap(bool block = true) => _tapIsBlocked = block;
 
-        private void CheckIfLastLevel()
+        private void EndGameIfLastLevel()
         {
             if (_levelsController.CheckIfLastLevel())
             {
