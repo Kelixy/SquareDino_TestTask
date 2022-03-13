@@ -21,16 +21,20 @@ namespace Controllers
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private Level[] levels;
 
-        public List<Enemy> EnemiesOnScene { get; private set; }
+        public List<IEnemy> EnemiesOnScene { get; private set; }
         private PoolOfObjects<IEnemy> _poolOfEnemies;
         private int _currentLevel;
         private int _killedEnemiesCount;
+        private GameController _gameController;
 
         public void Initialize()
         {
-            EnemiesOnScene = new List<Enemy>();
+            EnemiesOnScene = new List<IEnemy>();
             _poolOfEnemies = new PoolOfObjects<IEnemy>(enemyPrefab, poolTransform);
             SetEnemies();
+            _gameController = ControllersManager.Instance.GameController;
+            _gameController.OnWayPointReached += SwitchOffKilledEnemies;
+            _gameController.OnLevelSucceed += GoToNextLevel;
         }
 
         private void SetEnemies()
@@ -46,7 +50,8 @@ namespace Controllers
             for (var i = 0; i < levels[lvlIndex].CountOfEnemiesOnLvl; i++)
             {
                 var newEnemy = CreateEnemy(levels[lvlIndex].EnemyPointsOnLevel[i]);
-                EnemiesOnScene.Add((Enemy)newEnemy);
+                if (!EnemiesOnScene.Contains(newEnemy))
+                    EnemiesOnScene.Add(newEnemy);
             }
         }
 
@@ -54,6 +59,7 @@ namespace Controllers
         {
             var enemy = _poolOfEnemies.Get();
             enemy.SetStartParams(enemyPoint.position, enemyPoint.rotation);
+            enemy.Switch(true);
             return enemy;
         }
 
@@ -71,11 +77,22 @@ namespace Controllers
 
         public bool CheckIfLastLevel() => _currentLevel >= levels.Length;
 
+        private void SwitchOffKilledEnemies()
+        {
+            for (var i = 0; i < EnemiesOnScene.Count; i++)
+            {
+                if (EnemiesOnScene[i].IsKilled)
+                {
+                    _poolOfEnemies.Put(EnemiesOnScene[i]);
+                    EnemiesOnScene[i].Switch(false);
+                }
+            }
+        }
+
         public void GoToNextLevel()
         {
             _killedEnemiesCount = 0;
             _currentLevel++;
-            ControllersManager.Instance.HeroController.MoveToNextPoint();
         }
     }
 }

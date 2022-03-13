@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using Mechanics;
 using Settings;
@@ -14,6 +15,8 @@ namespace Controllers
         [SerializeField] private CanvasGroup curtains;
         [SerializeField] private GameObject instructions;
 
+        public Action OnWayPointReached;
+        public Action OnLevelSucceed;
         public AnimationKeys AnimationKeys => animationKeys;
         public ShootingMechanic ShootingMechanic => shootingMechanic;
 
@@ -27,6 +30,12 @@ namespace Controllers
             _controllersManager = ControllersManager.Instance;
             _controllersManager.HeroController.Initialize();
             _controllersManager.LevelsController.Initialize();
+
+            OnWayPointReached += () =>
+            {
+                BlockTap(false);
+                CheckIfLastLevel();
+            };
         }
 
         public void StartGame()
@@ -52,7 +61,7 @@ namespace Controllers
 
             if (levelsController.CheckIfLevelAimReached())
             {
-                levelsController.GoToNextLevel();
+                OnLevelSucceed.Invoke();
             }
         }
 

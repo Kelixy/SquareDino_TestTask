@@ -11,6 +11,8 @@ namespace SceneObjects
         [SerializeField] private Animator enemyAnimator;
         [SerializeField] private Image healthLine;
         
+        private bool _killed;
+        public bool IsKilled => _killed;
         public int CurrentHealth { get; private set; }
 
         public void SetStartParams(Vector3 startPos, Quaternion startRotation)
@@ -19,7 +21,10 @@ namespace SceneObjects
             transform.rotation = startRotation;
         }
 
-        private bool _killed;
+        public void Switch(bool shouldBeOn)
+        {
+            gameObject.SetActive(shouldBeOn);
+        }
 
         private static GameController GameController => ControllersManager.Instance.GameController;
 

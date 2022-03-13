@@ -20,18 +20,18 @@ namespace Controllers
         private AnimationKeys _animationKeys;
         private bool _mustGoToWaypoint;
         private int _currentWayPointInd;
-        
-        public Vector3 CurrentPosition => navMeshAgent.transform.position;
 
         public void Initialize()
         {
             _gameController = ControllersManager.Instance.GameController;
             _animationKeys = _gameController.AnimationKeys;
+            _gameController.OnLevelSucceed += MoveToNextPoint;
         }
 
         public void Shoot(Vector3 targetPos)
         {
-            var angle = ValuesCounter.CountTurningAngle(CurrentPosition, targetPos);
+            var currentPosition = navMeshAgent.transform.position;
+            var angle = ValuesCounter.CountTurningAngle(currentPosition, targetPos);
             
             DOTween.Sequence()
                 .Append(heroAnimator.transform.DORotate(new Vector3(0, angle, 0), 0.2f))
@@ -61,8 +61,7 @@ namespace Controllers
         private void StopHeroOnWayPoint()
         {
             _mustGoToWaypoint = false;
-            _gameController.BlockTap(false);
-            _gameController.CheckIfLastLevel();
+            _gameController.OnWayPointReached.Invoke();
             heroAnimator.Play(_animationKeys.IdleAnimationHash);
         }
 
