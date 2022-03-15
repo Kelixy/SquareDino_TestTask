@@ -9,7 +9,8 @@ namespace Controllers
 {
     public class GameController : MonoBehaviour
     {
-        [SerializeField] private Camera mainCamera;
+        public static bool TapIsBlocked = true;
+        
         [SerializeField] private ShootingMechanic shootingMechanic;
         [SerializeField] private AnimationKeys animationKeys;
         [SerializeField] private CanvasGroup curtains;
@@ -24,8 +25,6 @@ namespace Controllers
         private LevelsController _levelsController;
         private HeroController _heroController;
 
-        private bool _tapIsBlocked = true;
-
         private void Start()
         {
             ShootingMechanic.Initialize();
@@ -37,7 +36,7 @@ namespace Controllers
 
             OnWayPointReached += () =>
             {
-                BlockTap(false);
+                TapIsBlocked = false;
                 EndGameIfLastLevel();
                 GoNextIfAimReached();
             };
@@ -66,8 +65,6 @@ namespace Controllers
             }
         }
 
-        public void BlockTap(bool block = true) => _tapIsBlocked = block;
-
         private bool EndGameIfLastLevel()
         {
             if (_levelsController.CheckIfLastLevel())
@@ -77,17 +74,6 @@ namespace Controllers
             }
             
             return false;
-        }
-
-        private void Update()
-        {
-            if (Input.GetMouseButtonDown(0) && !_tapIsBlocked)
-            {
-                if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out var hit))
-                {
-                    _heroController.Shoot(hit.point);
-                }
-            }
         }
     }
 }

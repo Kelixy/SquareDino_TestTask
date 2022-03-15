@@ -6,13 +6,11 @@ namespace Settings
     public class AnimationKeys : ScriptableObject
     {
         [SerializeField] private string runAnimationName;
-        [SerializeField] private string deathAnimationName;
         [SerializeField] private string shootAnimationName;
         [SerializeField] private string idleAnimationName;
         [SerializeField] private string hitAnimationName;
 
         private int _runAnimationHash;
-        private int _deathAnimationHash;
         private int _shootAnimationHash;
         private int _idleAnimationHash;
         private int _hitAnimationHash;
@@ -20,10 +18,6 @@ namespace Settings
         public int RunAnimationHash => _runAnimationHash == default
             ? _runAnimationHash = Animator.StringToHash(runAnimationName)
             : _runAnimationHash;
-
-        public int DeathAnimationHash => _deathAnimationHash == default
-            ? _deathAnimationHash = Animator.StringToHash(deathAnimationName)
-            : _deathAnimationHash;
 
         public int ShootAnimationHash => _shootAnimationHash == default
             ? _shootAnimationHash = Animator.StringToHash(shootAnimationName)

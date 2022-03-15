@@ -10,6 +10,7 @@ namespace Controllers
     {
         private const float WayPointDestinationDelta = 0.1f;
         
+        [SerializeField] private Camera mainCamera;
         [SerializeField] private Animator heroAnimator;
         [SerializeField] private NavMeshAgent navMeshAgent;
         [SerializeField] private Transform[] wayPoints;
@@ -28,7 +29,7 @@ namespace Controllers
             _gameController.OnLevelSucceed += MoveToNextPoint;
         }
 
-        public void Shoot(Vector3 targetPos)
+        private void Shoot(Vector3 targetPos)
         {
             var currentPosition = navMeshAgent.transform.position;
             var angle = ValuesCounter.CountTurningAngle(currentPosition, targetPos);
@@ -45,7 +46,7 @@ namespace Controllers
 
         public void MoveToNextPoint()
         {
-            _gameController.BlockTap();
+            GameController.TapIsBlocked = true;
             
             DOTween.Sequence()
                 .Append(heroAnimator.transform.DOLocalRotate(new Vector3(0, 0, 0), 0.2f))
@@ -58,8 +59,9 @@ namespace Controllers
                 });
         }
 
-        private void StopHeroOnWayPoint()
+        private void StopOnWayPointIfIsGoing()
         {
+            if (!_mustGoToWaypoint || !CheckIfNearWaypoint()) return;
             _mustGoToWaypoint = false;
             _gameController.OnWayPointReached.Invoke();
             heroAnimator.Play(_animationKeys.IdleAnimationHash);
@@ -68,12 +70,21 @@ namespace Controllers
         private bool CheckIfNearWaypoint() =>
             Vector3.Distance(navMeshAgent.destination, navMeshAgent.transform.position) <= WayPointDestinationDelta;
 
+        private void ShootOnTapIfPossible()
+        {
+            if (Input.GetMouseButtonDown(0) && !GameController.TapIsBlocked)
+            {
+                if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out var hit))
+                {
+                    Shoot(hit.point);
+                }
+            }
+        }
+
         private void FixedUpdate()
         {
-            if (_mustGoToWaypoint && CheckIfNearWaypoint())
-            {
-                StopHeroOnWayPoint();
-            }
+            ShootOnTapIfPossible();
+            StopOnWayPointIfIsGoing();
         }
     }
 }

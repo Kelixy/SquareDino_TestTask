@@ -7,7 +7,9 @@ namespace SceneObjects
     public class Enemy : MonoBehaviour, IEnemy
     {
         [Range(0,100)][SerializeField] private int startHealth;
-        
+
+        [SerializeField] private CapsuleCollider hitCollider;
+        [SerializeField] private Rigidbody[] rigidBodies;
         [SerializeField] private Animator enemyAnimator;
         [SerializeField] private Image healthLine;
 
@@ -17,10 +19,21 @@ namespace SceneObjects
 
         public void SetStartParams(Vector3 startPos, Quaternion startRotation)
         {
+            enemyAnimator.enabled = true;
+            hitCollider.enabled = true;
+            SwitchKinematic(true);
             transform.position = startPos;
             transform.rotation = startRotation;
             healthLine.fillAmount = 1;
             CurrentHealth = startHealth;
+        }
+
+        private void SwitchKinematic(bool isOn)
+        {
+            for (var i = 0; i < rigidBodies.Length; i++)
+            {
+                rigidBodies[i].isKinematic = isOn;
+            }
         }
 
         public void Switch(bool shouldBeOn)
@@ -49,8 +62,10 @@ namespace SceneObjects
             if (IsKilled) return;
             IsKilled = true;
             healthLine.fillAmount = 0;
-            
-            enemyAnimator.Play(GameController.AnimationKeys.DeathAnimationHash);
+
+            enemyAnimator.enabled = false;
+            hitCollider.enabled = false;
+            SwitchKinematic(false);
             GameController.GoNextIfAimReached();
         }
     }

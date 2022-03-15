@@ -1550,6 +1550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eefd4ff689ac7248b095240a168debb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCamera: {fileID: 963194227}
   heroAnimator: {fileID: 1953629777}
   navMeshAgent: {fileID: 651757010}
   wayPoints:
@@ -2930,7 +2931,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5908f7b45afb8b44d8136f75991679e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 963194227}
   shootingMechanic: {fileID: 1483884926}
   animationKeys: {fileID: 11400000, guid: 0c17d6338a3495f45ac275debc92f833, type: 2}
   curtains: {fileID: 1885206758}
