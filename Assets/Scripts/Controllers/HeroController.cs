@@ -81,7 +81,7 @@ namespace Controllers
             }
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             ShootOnTapIfPossible();
             StopOnWayPointIfIsGoing();
